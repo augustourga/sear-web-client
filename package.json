@@ -1,0 +1,26 @@
+{
+  "name": "sear-web-client",
+  "version": "1.0.0",
+  "description": "sear-web-client",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/augustourga/sear-web-client.git"
+  },
+  "keywords": [
+    "sear",
+    "arduino"
+  ],
+  "author": "aurga",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/augustourga/sear-web-client/issues"
+  },
+  "homepage": "https://github.com/augustourga/sear-web-client#readme",
+  "dependencies": {
+    "mqtt": "^2.18.8"
+  }
+}
