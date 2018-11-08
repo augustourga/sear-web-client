@@ -14,7 +14,7 @@ var client  = mqtt.connect('mqtt://m15.cloudmqtt.com',options)
 var topics = {
   config : 'sear/1/config'
 }
-var initMessage = '{"action":"sear/1/config", "a": 80, "b": 21, "c": 22, "d": 30, "e": 15, "f": 21, "g": 22}'
+var initMessage = '{"action":"sear/1/config", "sM": 80, "lOn": 21, "lOff": 22, "vF": 21, "vD": 22, "vOn": 21, "vOff": 22}\n'
 
 
 client.on('connect', function () {
