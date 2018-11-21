@@ -21,6 +21,8 @@
   },
   "homepage": "https://github.com/augustourga/sear-web-client#readme",
   "dependencies": {
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
     "mqtt": "^2.18.8"
   }
 }

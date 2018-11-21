@@ -1,6 +1,8 @@
 const http = require('http');
 const mqtt = require('mqtt');
+const express = require('express');
 const config = require('./config');
+const ejs = require('ejs');
 const hostname = '127.0.0.1';
 const mqttServer = 'mqtt://m15.cloudmqtt.com';
 const port = 3000;
@@ -18,13 +20,18 @@ var topics = {
 var initMessage = '{"action":"sear/1/test", "sM": 80, "lOn": 21, "lOff": 22, "vF": 21, "vD": 22, "vOn": 21, "vOff": 22}\n'
 
 
-const server = http.createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('Hello World\n');
+var app = express();
+app.use(express.static(__dirname + '/'));
+app.set('views', __dirname + '/views');
+app.engine('html', ejs.renderFile);
+app.set('view engine', 'html');
+
+app.get('*', function(req, res){
+  res.render('index.html',{test:"caaca"});
 });
 
-server.listen(port, hostname, () => {
+
+app.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
   turnOnTopics();
   listenTopics();
