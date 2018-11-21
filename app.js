@@ -24,10 +24,17 @@ var app = express();
 app.use(express.static(__dirname + '/'));
 app.set('views', __dirname + '/views');
 app.engine('html', ejs.renderFile);
-app.set('view engine', 'html');
+app.set('view engine', 'ejs');
 
-app.get('*', function(req, res){
-  res.render('index.html',{test:"caaca"});
+
+// index page 
+app.get('/', function(req, res) {
+	res.render('pages/index');
+});
+
+// about page 
+app.get('/about', function(req, res) {
+	res.render('pages/about');
 });
 
 
