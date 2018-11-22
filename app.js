@@ -19,7 +19,6 @@ var topics = {
 }
 var initMessage = '{"action":"sear/1/test", "sM": 80, "lOn": 21, "lOff": 22, "vF": 21, "vD": 22, "vOn": 21, "vOff": 22}\n'
 
-
 var app = express();
 app.use(express.static(__dirname + '/'));
 app.set('views', __dirname + '/views');
@@ -33,8 +32,12 @@ app.get('/', function(req, res) {
 });
 
 // about page 
-app.get('/about', function(req, res) {
-	res.render('pages/about');
+app.get('/config', function(req, res) {
+	res.render('pages/config');
+});
+
+app.get('/info', function(req, res) {
+	res.render('pages/info');
 });
 
 
