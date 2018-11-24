@@ -21,8 +21,12 @@
   },
   "homepage": "https://github.com/augustourga/sear-web-client#readme",
   "dependencies": {
+    "body-parser": "^1.18.3",
+    "bootstrap-timepicker": "^0.5.2",
+    "date-time-picker": "^0.5.2",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
-    "mqtt": "^2.18.8"
+    "mqtt": "^2.18.8",
+    "timepicker": "^1.11.14"
   }
 }

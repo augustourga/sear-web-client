@@ -10,23 +10,44 @@
 	</header>
 
 	<main>
-		<div class="row">
-			<div class="col-sm-8">
-			
-				<div class="jumbotron">
-					<h1>This is great</h1>
-					<p>Welcome to templating using EJS</p>
-				</div>
-				
-			</div>
-			<div class="col-sm-4">
-				
-				<div class="well">
-					<h3>Look I'm A Sidebar!</h3>
-				</div>
+			<div id="configForm" class="form-group" method="post">
+				<div class="col-sm-6">			
+						<div class="jumbotron"> <!-- Fondo gris -->	
 
+							<input id="humidity" type="text" class="form-control" name="humidity" onkeypress="return isNumber(event)" placeholder="Nivel de humedad">
+							<div> <!-- Luz -->	
+									<h5>Desde <input id="lightFrom" type="text" class="form-control input-small">
+										Hasta <input id="lightTo" type="text" class="form-control input-small">
+										<span class="glyphicon glyphicon-flash"></span>
+									</h5>
+							</div>
+
+							<div> <!-- Ventilacion -->	
+								<h5>Desde <input id="fanFrom" type="text" class="form-control input-small">
+									Hasta <input id="fanTo" type="text" class="form-control input-small">
+									<span class="glyphicon glyphicon-leaf"></span>
+								</h5>
+							</div>
+
+							<button type="submit" class="btn btn-light" id="submitButton" onclick="sendData()" >Enviar</button>
+
+						</div>
+				</div>
 			</div>
-		</div>
+														
+									
+									<!--
+										<div class="row">
+											<div class='col-sm-6'>
+													<div class="input-group bootstrap-timepicker timepicker">
+														<span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+														<input id="timepicker1" type="text" class="form-control input-small">														
+													</div>
+											</div>
+									</div> -->
+								
+										
+				
 	</main>
 
 	<footer>
@@ -34,4 +55,58 @@
 	</footer>
 	
 </body>
+
+<!-- Only numbers validation -->
+<script type="text/javascript">   
+
+function sendData(){
+	
+	const params = { 
+		humidity: document.getElementById('humidity').value,
+		fanFrom: document.getElementById('fanFrom').value,
+		fanTo: document.getElementById('fanTo').value,
+		lightFrom: document.getElementById('lightFrom').value,
+		lightTo: document.getElementById('lightTo').value
+		
+	} ;
+
+	const http = new XMLHttpRequest()
+        http.open('POST', '/')
+        http.setRequestHeader('Content-type', 'application/json')
+        http.send(JSON.stringify(params)) // Make sure to stringify
+        http.onload = function() {
+            // Do whatever with response
+            alert(http.responseText)
+        }
+
+}
+
+
+	function isNumber(evt) {
+			evt = (evt) ? evt : window.event;
+			var charCode = (evt.which) ? evt.which : evt.keyCode;
+			if ( (charCode > 31 && charCode < 48) || charCode > 57) {
+				return false;
+			}
+			return true;
+		}
+
+	$('#lightFrom').timepicker({
+		showInputs: false
+	});
+
+	$('#lightTo').timepicker({
+		showInputs: false
+	});
+
+	$('#fanFrom').timepicker({
+		showInputs: false
+	});
+
+
+	$('#fanTo').timepicker({
+		showInputs: false
+	});
+
+</script>
 </html>
