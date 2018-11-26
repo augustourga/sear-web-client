@@ -27,24 +27,20 @@
 					<div class="list-group-item">
 						<h4 class="list-group-item-heading">
 							Ventiladores 
-							<a href="#"  data-toggle="tooltip" data-placement="bottom" title="Access website and use site API">
-							  <i class="fa fa-question-circle"></i>
-							</a>
+							<a href="#"  data-toggle="tooltip" data-placement="bottom" title="Access website and use site API"></a>
 						</h4>
 						<p class="list-group-item-text">
-							<span class="label label-danger">ventilador</span>
+							<span id="ventilation"></span>
 						</p>
 					</div>
 				  
 					<div class="list-group-item">
 						<h4 class="list-group-item-heading">
 							Fuente de Agua 
-							<a href="#"  data-toggle="tooltip" data-placement="bottom" title="Access site using SSH terminal">
-							  <i class="fa fa-question-circle"></i>
-							</a>
+							<a href="#"  data-toggle="tooltip" data-placement="bottom" ></a>
 						</h4>
 						<p class="list-group-item-text">
-							<span class="label label-success">Operational</span>
+							<span id="waterFont" class="label label-success">Encendido</span>
 						</p>
 					</div>
 				  
@@ -52,11 +48,11 @@
 						<h4 class="list-group-item-heading">
 							Luz 
 							<a href="#"  data-toggle="tooltip" data-placement="bottom" title="Access database server and execute queries">
-							  <i class="fa fa-question-circle"></i>
+							  
 							</a>
 						</h4>
 						<p class="list-group-item-text">
-							<span class="label label-success">Operational</span>
+							<span id ="light"></span>
 						</p>
 					</div>
 
@@ -64,11 +60,11 @@
 					  <h4 class="list-group-item-heading">
 						  Temperatura 
 						  <a href="#"  data-toggle="tooltip" data-placement="bottom" title="Access database server and execute queries">
-							<i class="fa fa-question-circle"></i>
+							
 						  </a>
 					  </h4>
 					  <p class="list-group-item-text">
-						  <span class="label label-success">Operational</span>
+						  <span class="label label-success">Encendido</span>
 					  </p>
 					</div>
 					
@@ -81,5 +77,49 @@
 	</footer>
 	
 </body>
+<script>
 
+	var isLightOn = ( "<%- light %>" == "true") ;
+	var isVentilationOn = ( "<%- ventilation %>" == "true") ;
+		
+	showStatus('light',isLightOn);
+	showStatus('ventilation',isVentilationOn);
+	
+	// Change Green/Red span 
+	function showStatus(id,isOn){
+		console.log(id , isOn);
+		
+		if(isOn){
+			document.getElementById(id).textContent="Encendido";
+			document.getElementById(id).className="label label-success";
+		}else{
+			document.getElementById(id).textContent="Apagado";
+			document.getElementById(id).className="label label-danger";
+		}
+	}
+	//console.log(status);
+	// showSpan();
+
+	// // Change Status Name
+	// function showSpan(){
+	// 	var spanIdentifiers = ["ventilationSpan","waterFont"];
+
+
+	// 	spanIdentifiers.forEach(function(item, index, array) {
+	// 		document.getElementById(item).textContent="Testeando";
+	// 		document.getElementById(item).className=getClass();
+	// 	});
+	// }
+
+	// //Get span classes
+	// function getClass(){
+		
+		
+	// 	var spanClass = "label label-success";
+
+	// 	return spanClass;
+	// }
+
+
+</script>
 </html>

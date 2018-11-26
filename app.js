@@ -17,9 +17,19 @@ var topics = {
   config: 'sear/1/test',
   caca: 'sear/1/caca'
 }
+
+var arduStatus = { 
+  sM: 80,
+  lOn: 0, //light time On
+  lOff: 1, //light time Off
+  vOn: 1, //ventilation time On
+  vOff: 2, //ventilation time off
+  vF: 22, // ventilation frecuency
+  vD: 22 // ventilation duration
+}
+
 var initMessage = '{"action":"sear/1/test", "sM": 80, "lOn": 21, "lOff": 22, "vF": 21, "vD": 22, "vOn": 21, "vOff": 22}\n'
 
-var response = JSON.parse(initMessage);
 
 
 var app = express();
@@ -36,7 +46,8 @@ app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 // index page 
 app.get('/', function(req, res) {
-  res.render('pages/index',{ventilador:"test"});
+  
+  res.render('pages/index', parseArduStatus(arduStatus) );
 
 });
 
@@ -56,8 +67,22 @@ app.get('/config', function(req, res) {
 });
 
 //read POST values from views /
-app.post('/', function(req, res) {
-  console.log(req.body );
+app.post('/', function(req, res){
+
+
+  if(req.body.topic ='sear/config/request')
+  {
+    //console.log("Sending: ",req.body); 
+    client.publish(req.body.topic,req.body.toString()) //MQTT Publish Ardu config
+    arduStatus = req.body;
+    console.log(arduStatus);
+    res.redirect('/') //modificar view de status
+  }
+
+  
+
+  
+
 });
 
 app.listen(port, hostname, () => {
@@ -77,12 +102,11 @@ turnOnTopics = () => {
 listenTopics = () => {
   client.on('message', function (topic, message) {
     // message is Buffer
-    // console.log("topic",topic.toString());
     
     try
     {
       var response = JSON.parse(message.toString());
-      console.log("Receivine message from :", response.action); //Topic Name
+      console.log("Receivine message from :", topic.toString() ); //Topic Name
     }
     catch(e)
     {
@@ -92,4 +116,27 @@ listenTopics = () => {
 
 
   })
+}
+
+//Return JSON so index view can draw 
+function parseArduStatus(status){
+
+    
+  var hour = (new Date()).getHours();
+  
+  var lightOn = false;    
+  if( hour >= status.lOn && hour < status.lOff){
+    lightOn = true;
+  }
+
+  var ventilationOn = false; 
+  if( hour >= status.vOn && hour < status.vOff){
+    
+    ventilationOn = true;
+  }
+
+    return { 
+      light : lightOn , 
+      ventilation : ventilationOn
+    }
 }

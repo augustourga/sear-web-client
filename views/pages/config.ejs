@@ -14,7 +14,8 @@
 				<div class="col-sm-6">			
 						<div class="jumbotron"> <!-- Fondo gris -->	
 
-							<input id="humidity" type="text" class="form-control" name="humidity" onkeypress="return isNumber(event)" placeholder="Nivel de humedad">
+							<input id="moisture" type="text" class="form-control" name="moisture" onkeypress="return isNumber(event)" placeholder="Nivel de humedad del suelo">																					
+							
 							<div> <!-- Luz -->	
 									<h5>Desde <input id="lightFrom" type="text" class="form-control input-small">
 										Hasta <input id="lightTo" type="text" class="form-control input-small">
@@ -28,6 +29,11 @@
 									<span class="glyphicon glyphicon-leaf"></span>
 								</h5>
 							</div>
+							
+							<input id="vFrecuency" type="text" class="form-control" name="vFrecuency" onkeypress="return isNumber(event)" placeholder="Frencuencia de ventilacion">
+
+							<input id="ventilation" type="text" class="form-control" name="ventilation" onkeypress="return isNumber(event)" placeholder="Tiempo de ventilacion">
+							
 
 							<button type="submit" class="btn btn-light" id="submitButton" onclick="sendData()" >Enviar</button>
 
@@ -62,12 +68,14 @@
 function sendData(){
 	
 	const params = { 
-		humidity: document.getElementById('humidity').value,
-		fanFrom: document.getElementById('fanFrom').value,
-		fanTo: document.getElementById('fanTo').value,
-		lightFrom: document.getElementById('lightFrom').value,
-		lightTo: document.getElementById('lightTo').value
-		
+		topic: 'sear/config/request',
+		sM: document.getElementById('moisture').value,
+		vOn: $('#fanFrom').data('timepicker').hour,
+		vOff: $('#fanTo').data('timepicker').hour,
+		lOn: $('#lightFrom').data('timepicker').hour,
+		lOff: $('#lightTo').data('timepicker').hour,
+		vF: document.getElementById('vFrecuency').value,
+		vD: document.getElementById('ventilation').value	
 	} ;
 
 	const http = new XMLHttpRequest()
