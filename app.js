@@ -3,9 +3,7 @@ const mqtt = require('mqtt');
 const express = require('express');
 const config = require('./config');
 const ejs = require('ejs');
-const hostname = '127.0.0.1';
 const mqttServer = 'mqtt://m15.cloudmqtt.com';
-const port = 3000;
 var options = {
   port: 13049,
   host: mqttServer,
@@ -85,8 +83,9 @@ app.post('/', function(req, res){
 
 });
 
-app.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}/`);
   turnOnTopics();
   listenTopics();
 });
