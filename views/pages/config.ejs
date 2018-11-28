@@ -14,7 +14,7 @@
 	<main>
 		<div id="configForm" class="form-group" method="post"> <!-- should be form -->
 			<div class="col-sm-6">
-				<div class="jumbotron">
+				<div class="jumbotron"  style="width: 160%;">
 					<!-- Fondo gris -->
 
 					<input id="moisture" type="text" class="form-control" name="moisture" onkeypress="return isNumber(event)"
@@ -64,11 +64,12 @@
 
 	</main>
 
-	<footer>
+	<footer style="margin-top: 60%">
 		<% include ../partials/footer %>
 	</footer>
 
 </body>
+
 
 <!-- Only numbers validation -->
 <script type="text/javascript">
@@ -105,21 +106,28 @@
 	}
 
 	$('#lightFrom').timepicker({
-		showInputs: false
-	});
+		showInputs: false,
+		use24hours: true,
+		showMeridian: false     
+	}).val("12:00");
 
 	$('#lightTo').timepicker({
-		showInputs: false
-	});
+		showInputs: false,
+		use24hours: true,
+		showMeridian: false     
+	}).val("12:00");
 
 	$('#fanFrom').timepicker({
-		showInputs: false
-	});
+		showInputs: false,
+		use24hours: true,
+		showMeridian: false     
+	}).val("12:00");
 
 	$('#fanTo').timepicker({
-		showInputs: false
-	});
-
+		showInputs: false,
+		use24hours: true,
+		showMeridian: false     	
+	}).val("12:00");
 </script>
 
 </html>
