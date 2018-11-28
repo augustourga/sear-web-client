@@ -13,7 +13,7 @@ var options = {
   port: 13049,
   host: 'mqtt://m15.cloudmqtt.com',
   username: 'ipwqlqlt',
-  password: 'RUAJQ4ldIL9w'
+  password: 'l4kzH-C8EIYg'
 }
 var client = mqtt.connect(options.host, options)
 var topics = {
