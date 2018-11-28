@@ -28,6 +28,7 @@
     "ejs": "^2.6.1",
     "express": "^4.16.4",
     "mqtt": "^2.18.8",
+    "serialport": "^7.1.0",
     "socket.io": "^2.1.1",
     "timepicker": "^1.11.14"
   }

@@ -43,11 +43,24 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3010;
 io.on('connection', function (socket) {
   console.log('Client connect');
 });
 
+const operationMode = process.argv[2]
+const serialPortPath = process.argv[3]
+
+var SerialPort = require('serialport');
+const Readline = require('@serialport/parser-readline')
+var port = new SerialPort(serialPortPath, {
+baudRate:9600
+
+});
+
+const parser = port.pipe(new Readline({ delimiter: '\n' }))
+
+parser.on('data', console.log)
 
 
 http.listen(PORT, () => {
@@ -128,11 +141,17 @@ app.get('/config', (req, res) => {
 //read POST values from views /
 app.post('/config', (req, res) => {
   console.log('Entró a /config con:', req.body);
-  if (req.body.topic == topics.configRequest) {
-    console.log("Sending: ", req.body);
-    client.publish(req.body.topic, JSON.stringify(req.body)); //MQTT Publish Ardu config
-    console.log('Ya publiqué');
-  }
+  //if (req.body.topic == topics.configRequest) {
+    console.log(operationMode)
+    if (operationMode == "serial") {
+      console.log("Comunicandose por serial...")
+      port.write(JSON.stringify(req.body));
+    } else {
+      console.log("Sending: ", req.body);
+      client.publish(req.body.topic, JSON.stringify(req.body)); //MQTT Publish Ardu config
+      console.log('Ya publiqué');
+    }
+  //}
 });
 
 setInterval(function(){ 
