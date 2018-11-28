@@ -43,7 +43,7 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
-const PORT = process.env.PORT || 3010;
+const PORT = process.env.PORT || 3020;
 io.on('connection', function (socket) {
   console.log('Client connect');
 });
@@ -147,7 +147,7 @@ app.post('/config', (req, res) => {
       port.write(JSON.stringify(req.body));
     } else {
       console.log("Sending: ", req.body);
-      client.publish(req.body.topic, JSON.stringify(req.body)); //MQTT Publish Ardu config
+      client.publish(topics.configRequest, JSON.stringify(req.body)); //MQTT Publish Ardu config
       console.log('Ya publiqué');
     }
 });
