@@ -20,6 +20,8 @@
 		
 		<script src="//code.jquery.com/jquery.min.js"></script>
 		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="/client/client.js"></script>
 		<div class="row clearfix">
 			<div class="col-md-12 column">
 				<div class="list-group">
@@ -70,6 +72,7 @@
 					
 				</div>
 			</div>
+			<div id="socketTest">Esto debería cambiar</div>
 		</div>
 	</main>
 	<footer>
@@ -97,29 +100,6 @@
 			document.getElementById(id).className="label label-danger";
 		}
 	}
-	//console.log(status);
-	// showSpan();
-
-	// // Change Status Name
-	// function showSpan(){
-	// 	var spanIdentifiers = ["ventilationSpan","waterFont"];
-
-
-	// 	spanIdentifiers.forEach(function(item, index, array) {
-	// 		document.getElementById(item).textContent="Testeando";
-	// 		document.getElementById(item).className=getClass();
-	// 	});
-	// }
-
-	// //Get span classes
-	// function getClass(){
-		
-		
-	// 	var spanClass = "label label-success";
-
-	// 	return spanClass;
-	// }
-
-
+	
 </script>
 </html>

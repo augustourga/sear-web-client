@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<% include ../partials/head %>
 </head>
+
 <body class="container">
 
 	<header>
@@ -10,39 +12,45 @@
 	</header>
 
 	<main>
-			<div id="configForm" class="form-group" method="post">
-				<div class="col-sm-6">			
-						<div class="jumbotron"> <!-- Fondo gris -->	
+		<div id="configForm" class="form-group" method="post"> <!-- should be form -->
+			<div class="col-sm-6">
+				<div class="jumbotron">
+					<!-- Fondo gris -->
 
-							<input id="moisture" type="text" class="form-control" name="moisture" onkeypress="return isNumber(event)" placeholder="Nivel de humedad del suelo">																					
-							
-							<div> <!-- Luz -->	
-									<h5>Desde <input id="lightFrom" type="text" class="form-control input-small">
-										Hasta <input id="lightTo" type="text" class="form-control input-small">
-										<span class="glyphicon glyphicon-flash"></span>
-									</h5>
-							</div>
+					<input id="moisture" type="text" class="form-control" name="moisture" onkeypress="return isNumber(event)"
+					 placeholder="Nivel de humedad del suelo">
 
-							<div> <!-- Ventilacion -->	
-								<h5>Desde <input id="fanFrom" type="text" class="form-control input-small">
-									Hasta <input id="fanTo" type="text" class="form-control input-small">
-									<span class="glyphicon glyphicon-leaf"></span>
-								</h5>
-							</div>
-							
-							<input id="vFrecuency" type="text" class="form-control" name="vFrecuency" onkeypress="return isNumber(event)" placeholder="Frencuencia de ventilacion">
+					<div>
+						<!-- Luz -->
+						<h5>Desde <input id="lightFrom" type="text" class="form-control input-small">
+							Hasta <input id="lightTo" type="text" class="form-control input-small">
+							<span class="glyphicon glyphicon-flash"></span>
+						</h5>
+					</div>
 
-							<input id="ventilation" type="text" class="form-control" name="ventilation" onkeypress="return isNumber(event)" placeholder="Tiempo de ventilacion">
-							
+					<div>
+						<!-- Ventilacion -->
+						<h5>Desde <input id="fanFrom" type="text" class="form-control input-small">
+							Hasta <input id="fanTo" type="text" class="form-control input-small">
+							<span class="glyphicon glyphicon-leaf"></span>
+						</h5>
+					</div>
 
-							<button type="submit" class="btn btn-light" id="submitButton" onclick="sendData()" >Enviar</button>
+					<input id="vFrecuency" type="text" class="form-control" name="vFrecuency" onkeypress="return isNumber(event)"
+					 placeholder="Frencuencia de ventilacion">
 
-						</div>
+					<input id="ventilation" type="text" class="form-control" name="ventilation" onkeypress="return isNumber(event)"
+					 placeholder="Tiempo de ventilacion">
+
+
+					<button type="submit" class="btn btn-light" id="submitButton" onclick="sendData()">Enviar</button>
+
 				</div>
 			</div>
-														
-									
-									<!--
+		</div>
+
+
+		<!--
 										<div class="row">
 											<div class='col-sm-6'>
 													<div class="input-group bootstrap-timepicker timepicker">
@@ -51,53 +59,50 @@
 													</div>
 											</div>
 									</div> -->
-								
-										
-				
+
+
+
 	</main>
 
 	<footer>
 		<% include ../partials/footer %>
 	</footer>
-	
+
 </body>
 
 <!-- Only numbers validation -->
-<script type="text/javascript">   
+<script type="text/javascript">
+	function sendData() {
+		const params = {
+			soilMoisture: document.getElementById('moisture').value,
+			ventilationOnTime: $('#fanFrom').data('timepicker').hour,
+			ventilationOffTime: $('#fanTo').data('timepicker').hour,
+			lightsOnTime: $('#lightFrom').data('timepicker').hour,
+			lightsOffTime: $('#lightTo').data('timepicker').hour,
+			ventilationFrequency: document.getElementById('vFrecuency').value,
+			ventilationDuration: document.getElementById('ventilation').value
+		};
 
-function sendData(){
-	
-	const params = { 
-		topic: 'sear/config/request',
-		sM: document.getElementById('moisture').value,
-		vOn: $('#fanFrom').data('timepicker').hour,
-		vOff: $('#fanTo').data('timepicker').hour,
-		lOn: $('#lightFrom').data('timepicker').hour,
-		lOff: $('#lightTo').data('timepicker').hour,
-		vF: document.getElementById('vFrecuency').value,
-		vD: document.getElementById('ventilation').value	
-	} ;
+		const http = new XMLHttpRequest()
+		http.open('POST', '/config')
+		http.setRequestHeader('Content-type', 'application/json')
+		http.send(JSON.stringify(params)) // Make sure to stringify
+		http.onload = function (response) {
+			// Do whatever with response
+			console.log("response", response)
+		}
 
-	const http = new XMLHttpRequest()
-        http.open('POST', '/')
-        http.setRequestHeader('Content-type', 'application/json')
-        http.send(JSON.stringify(params)) // Make sure to stringify
-        http.onload = function() {
-            // Do whatever with response
-            alert(http.responseText)
-        }
-
-}
+	}
 
 
 	function isNumber(evt) {
-			evt = (evt) ? evt : window.event;
-			var charCode = (evt.which) ? evt.which : evt.keyCode;
-			if ( (charCode > 31 && charCode < 48) || charCode > 57) {
-				return false;
-			}
-			return true;
+		evt = (evt) ? evt : window.event;
+		var charCode = (evt.which) ? evt.which : evt.keyCode;
+		if ((charCode > 31 && charCode < 48) || charCode > 57) {
+			return false;
 		}
+		return true;
+	}
 
 	$('#lightFrom').timepicker({
 		showInputs: false
@@ -111,10 +116,10 @@ function sendData(){
 		showInputs: false
 	});
 
-
 	$('#fanTo').timepicker({
 		showInputs: false
 	});
 
 </script>
+
 </html>
