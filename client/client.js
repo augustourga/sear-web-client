@@ -16,4 +16,6 @@ var topics = {
 
 socket.on(topics.statusResponse, function (msg) {
     $('#socketTest').append($('<li>').text(msg));
+
+    
 });

@@ -24,14 +24,23 @@ var topics = {
 }
 
 var arduStatus = {
-  soilMoisture: 80,
-  lightsOnTime: 0, //light time On
-  lightsOffTime: 1, //light time Off
-  ventilationFrequency: 1, //ventilation time On
-  ventilationDuration: 2, //ventilation time off
-  ventilationOnTime: 22, // ventilation frecuency
-  ventilationOffTime: 22 // ventilation duration
+  configuration:{
+    soilMoisture: 80,
+    lightsOnTime: 0, //light time On
+    lightsOffTime: 1, //light time Off
+    ventilationFrequency: 1, //ventilation time On
+    ventilationDuration: 2, //ventilation time off
+    ventilationOnTime: 22, // ventilation frecuency
+    ventilationOffTime: 22 // ventilation duration
+  },
+  status:{
+    temperature : 25,
+    soilHumidity: 30,
+    humidity: 40
+  }
+
 }
+
 
 app.use(express.static(__dirname + '/'));
 app.set('views', __dirname + '/views');
@@ -99,16 +108,24 @@ listenTopics = () => {
 function parseArduStatus(status) {
   var hour = (new Date()).getHours();
   var lightOn = false;
-  if (hour >= status.lightsOnTime && hour < status.lightsOffTime) {
+  if (hour >= status.configuration.lightsOnTime && hour < status.configuration.lightsOffTime) {
     lightOn = true;
   }
   var ventilationOn = false;
-  if (hour >= status.ventilationOnTime && hour < status.ventilationOffTime) {
+  if (hour >= status.configuration.ventilationOnTime && hour < status.configuration.ventilationOffTime) {
     ventilationOn = true;
   }
+
   return {
     light: lightOn,
-    ventilation: ventilationOn
+    ventilation: ventilationOn,
+    temperature: status.status.temperature,
+    humidity: status.status.humidity,
+    soilHumidity: status.status.soilHumidity,
+    lightsOnTime: status.configuration.lightsOnTime,
+    lightsOffTime: status.configuration.lightsOffTime,
+    ventilationOnTime: status.configuration.ventilationOnTime,
+    ventilationOffTime: status.configuration.ventilationOffTime
   }
 }
 
