@@ -1,38 +1,47 @@
-const http = require('http');
 const mqtt = require('mqtt');
 const express = require('express');
-const config = require('./config');
 const ejs = require('ejs');
-const hostname = '127.0.0.1';
-const mqttServer = 'mqtt://m15.cloudmqtt.com';
-const port = 3000;
+
+const giveMeStatus = {
+  status: "giveMeStatus"
+}
+const app = express();
+const http = require('http').Server(app);
+var io = require('socket.io')(http);
+
 var options = {
   port: 13049,
-  host: mqttServer,
+  host: 'mqtt://m15.cloudmqtt.com',
   username: 'ipwqlqlt',
-  password: '62b_mnAEIeNB'
+  password: 'l4kzH-C8EIYg'
 }
-var client = mqtt.connect('mqtt://m15.cloudmqtt.com', options)
+var client = mqtt.connect(options.host, options)
 var topics = {
-  config: 'sear/1/test',
-  caca: 'sear/1/caca'
+  configRequest: 'sear/config/request',
+  configResponse: 'sear/config/response',
+  statusRequest: 'sear/status/request',
+  statusResponse: 'sear/status/response'
 }
 
-var arduStatus = { 
-  sM: 80,
-  lOn: 0, //light time On
-  lOff: 1, //light time Off
-  vOn: 1, //ventilation time On
-  vOff: 2, //ventilation time off
-  vF: 22, // ventilation frecuency
-  vD: 22 // ventilation duration
+var arduStatus = {
+  configuration:{
+    soilMoisture: 80,
+    lightsOnTime: 0, //light time On
+    lightsOffTime: 1, //light time Off
+    ventilationFrequency: 1, //ventilation time On
+    ventilationDuration: 2, //ventilation time off
+    ventilationOnTime: 22, // ventilation frecuency
+    ventilationOffTime: 22 // ventilation duration
+  },
+  status:{
+    temperature : 25,
+    soilHumidity: 30,
+    humidity: 40
+  }
+
 }
 
-var initMessage = '{"action":"sear/1/test", "sM": 80, "lOn": 21, "lOff": 22, "vF": 21, "vD": 22, "vOn": 21, "vOff": 22}\n'
 
-
-
-var app = express();
 app.use(express.static(__dirname + '/'));
 app.set('views', __dirname + '/views');
 app.engine('html', ejs.renderFile);
@@ -43,100 +52,123 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
-
-// index page 
-app.get('/', function(req, res) {
-  
-  res.render('pages/index', parseArduStatus(arduStatus) );
-
+const PORT = process.env.PORT || 3020;
+io.on('connection', function (socket) {
+  console.log('Client connect');
 });
 
-app.get('/index', function(req, res) {
-	res.render('pages/index');
-});
+const operationMode = process.argv[2]
+const serialPortPath = process.argv[3]
+if (operationMode == "serial") {
+  var SerialPort = require('serialport');
+  const Readline = require('@serialport/parser-readline')
+  var port = new SerialPort(serialPortPath, {
+    baudRate:9600
+  });
 
-// info page 
-app.get('/info', function(req, res) {
-	res.render('pages/info');
-});
+  const parser = port.pipe(new Readline({ delimiter: '\n' }))
 
-
-// config page 
-app.get('/config', function(req, res) {
-  res.render('pages/config');
-});
-
-//read POST values from views /
-app.post('/', function(req, res){
+  parser.on('data', console.log)
+}
 
 
-  if(req.body.topic ='sear/config/request')
-  {
-    //console.log("Sending: ",req.body); 
-    client.publish(req.body.topic,req.body.toString()) //MQTT Publish Ardu config
-    arduStatus = req.body;
-    console.log(arduStatus);
-    res.redirect('/') //modificar view de status
-  }
-
-  
-
-  
-
-});
-
-app.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+http.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}/`);
   turnOnTopics();
   listenTopics();
 });
 
 turnOnTopics = () => {
   client.on('connect', function () {
-    client.subscribe(topics.config, function (err) {});
-    client.subscribe(topics.caca, function (err) {})
-
+    client.subscribe(topics.configRequest, (err) => err);
+    client.subscribe(topics.configResponse, (err) => err),
+    client.subscribe(topics.statusRequest, (err) => err)
+    client.subscribe(topics.statusResponse, (err) => err)
   })
 }
+
+// io.on(topics.statusRequest, function (msg) {
+//   console.log("server status request");
+//   client.publish(topics.statusRequest, JSON.stringify(msg)); //MQTT Publish Ardu config
+// });
 
 listenTopics = () => {
-  client.on('message', function (topic, message) {
+  client.on('message', (topic, message) => {
     // message is Buffer
-    
-    try
-    {
-      var response = JSON.parse(message.toString());
-      console.log("Receivine message from :", topic.toString() ); //Topic Name
+    try {
+        var response = JSON.parse(message);
+        io.emit(topic, response);
     }
-    catch(e)
-    {
-      Console.log("Error getting topic answer",response);
+    catch (e) {
+      console.log("Error getting topic answer", e);
     }
-    
-
-
   })
 }
-
 //Return JSON so index view can draw 
-function parseArduStatus(status){
-
-    
+function parseArduStatus(status) {
   var hour = (new Date()).getHours();
-  
-  var lightOn = false;    
-  if( hour >= status.lOn && hour < status.lOff){
+  var lightOn = false;
+  if (hour >= status.configuration.lightsOnTime && hour < status.configuration.lightsOffTime) {
     lightOn = true;
   }
-
-  var ventilationOn = false; 
-  if( hour >= status.vOn && hour < status.vOff){
-    
+  var ventilationOn = false;
+  if (hour >= status.configuration.ventilationOnTime && hour < status.configuration.ventilationOffTime) {
     ventilationOn = true;
   }
 
-    return { 
-      light : lightOn , 
-      ventilation : ventilationOn
-    }
+  return {
+    light: lightOn,
+    ventilation: ventilationOn,
+    temperature: status.status.temperature,
+    humidity: status.status.humidity,
+    soilHumidity: status.status.soilHumidity,
+    lightsOnTime: status.configuration.lightsOnTime,
+    lightsOffTime: status.configuration.lightsOffTime,
+    ventilationOnTime: status.configuration.ventilationOnTime,
+    ventilationOffTime: status.configuration.ventilationOffTime
+  }
 }
+
+
+
+// index page 
+app.get('/', function (req, res) {
+  client.publish(topics.statusRequest, JSON.stringify(giveMeStatus)); //MQTT Publish Ardu config
+  res.render('pages/index', parseArduStatus(arduStatus));
+
+});
+
+app.get('/index', function (req, res) {
+  client.publish(topics.statusRequest, JSON.stringify(giveMeStatus)); //MQTT Publish Ardu config
+  res.render('pages/index', parseArduStatus(arduStatus));
+});
+
+// info page 
+app.get('/info', function (req, res) {
+  res.render('pages/info');
+});
+
+
+// config page 
+app.get('/config', (req, res) => {
+  res.render('pages/config', topics);
+});
+
+
+//read POST values from views /
+app.post('/config', (req, res) => {
+  console.log('Entró a /config con:', req.body);
+    console.log(operationMode)
+    if (operationMode == "serial") {
+      console.log("Comunicandose por serial...")
+      port.write(JSON.stringify(req.body));
+    } else {
+      console.log("Sending: ", req.body);
+      client.publish(topics.configRequest, JSON.stringify(req.body)); //MQTT Publish Ardu config
+      console.log('Ya publiqué');
+    }
+});
+
+setInterval(function(){ 
+  client.publish(topics.statusRequest, JSON.stringify(giveMeStatus)); //MQTT Publish Ardu config
+ }, 30000 );

@@ -20,28 +20,34 @@
 		
 		<script src="//code.jquery.com/jquery.min.js"></script>
 		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="/client/client.js"></script>
+		<link href="https://bootsnipp.com/snippets/featured/circle-progress-bar">
+
+		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 		<div class="row clearfix">
-			<div class="col-md-12 column">
+			<div class="col-md-6 column">
 				<div class="list-group">
-				  
+				  			  
 					<div class="list-group-item">
 						<h4 class="list-group-item-heading">
-							Ventiladores 
-							<a href="#"  data-toggle="tooltip" data-placement="bottom" title="Access website and use site API"></a>
-						</h4>
-						<p class="list-group-item-text">
-							<span id="ventilation"></span>
-						</p>
-					</div>
-				  
-					<div class="list-group-item">
-						<h4 class="list-group-item-heading">
-							Fuente de Agua 
+							Ventilacion 
 							<a href="#"  data-toggle="tooltip" data-placement="bottom" ></a>
 						</h4>
 						<p class="list-group-item-text">
-							<span id="waterFont" class="label label-success">Encendido</span>
+							<span id="ventilation" class="label label-success"></span>
 						</p>
+						<form>
+							<div class="form-group">
+							  <label for="inputsm">Horario de inicio:</label>
+							  <input id="ventilationOnTime" class="form-control input-sm"  type="text" disabled>
+							</div>
+
+							<div class="form-group">
+								<label for="inputsm">Horario de finalizacion:</label>
+								<input id="ventilationOffTime" class="form-control input-sm"  type="text" disabled>
+							  </div>
+						  </form>
 					</div>
 				  
 					<div class="list-group-item">
@@ -50,27 +56,79 @@
 							<a href="#"  data-toggle="tooltip" data-placement="bottom" title="Access database server and execute queries">
 							  
 							</a>
+							<p class="list-group-item-text">
+								<span id ="light"></span>
+							</p>
+						
 						</h4>
-						<p class="list-group-item-text">
-							<span id ="light"></span>
-						</p>
+
+						<form>
+							<div class="form-group">
+							  <label for="inputsm">Horario de inicio:</label>
+							  <input class="form-control input-sm" id="lightsOnTime" type="text" disabled>
+							</div>
+
+							<div class="form-group">
+								<label for="inputsm">Horario de finalizacion:</label>
+								<input class="form-control input-sm" id="lightsOffTime" type="text" disabled>
+							  </div>
+						  </form>
+						
+					
 					</div>
 
 					<div class="list-group-item">
-					  <h4 class="list-group-item-heading">
-						  Temperatura 
-						  <a href="#"  data-toggle="tooltip" data-placement="bottom" title="Access database server and execute queries">
-							
-						  </a>
-					  </h4>
-					  <p class="list-group-item-text">
-						  <span class="label label-success">Encendido</span>
-					  </p>
+						  
+						<h4 class="list-group-item-heading">
+						  Temperatura del ambiente
+						  <a href="#"  data-toggle="tooltip" data-placement="bottom" title="Access database server and execute queries"></a>
+						</h4>
+						<p class="list-group-item-text">
+						  <div class="progress">
+							<div class="w3-light-grey w3-round-small">
+								<div id="tempBar" class="w3-container w3-red w3-round-xlarge" style="width:24%"></div>
+							  </div>
+						  </div>
+						</p>		
 					</div>
-					
-				</div>
+
+					<div class="list-group-item">
+						<h4 class="list-group-item-heading">
+							Humedad del aire
+							<a href="#"  data-toggle="tooltip" data-placement="bottom">
+														  
+							</a>
+						</h4>
+						<p class="list-group-item-text">
+							<div class="progress">
+							  <div class="w3-light-grey w3-round-small">
+								  <div id="humBar" class="w3-container w3-withe w3-round-xlarge" style="width:24%"></div>
+								</div>
+							</div>
+						  </p>						
+					  </div>
+
+					  <div class="list-group-item">
+						<h4 class="list-group-item-heading">
+							Humedad del suelo
+							<a href="#"  data-toggle="tooltip" data-placement="bottom" title="Access database server and execute queries">
+														  
+							</a>
+	
+						</h4>
+						<p class="list-group-item-text">
+							<div class="progress">
+							  <div class="w3-light-grey w3-round-small">
+								  <div id="soilHumBar" class="w3-container w3-green w3-round-xlarge" style="width:24%"></div>
+								</div>
+							</div>
+						  </p>						
+					  </div> 
 			</div>
+			<div id="socketTest">Esto debería cambiar</div>
 		</div>
+
+	
 	</main>
 	<footer>
 		<% include ../partials/footer %>
@@ -81,9 +139,30 @@
 
 	var isLightOn = ( "<%- light %>" == "true") ;
 	var isVentilationOn = ( "<%- ventilation %>" == "true") ;
-		
-	showStatus('light',isLightOn);
-	showStatus('ventilation',isVentilationOn);
+	var temperature = "<%- temperature %>";
+	var humidity = "<%- humidity %>";
+	var soilHumidity = "<%- soilHumidity %>";
+	var lightsOnTime = "<%- lightsOnTime %>";
+	var lightsOffTime = "<%- lightsOffTime %>";
+	var ventilationOnTime = "<%- ventilationOnTime %>";
+	var ventilationOffTime = "<%- ventilationOffTime %>";
+
+	
+	showStatus('light',isLightOn); //Panel Luz
+	document.getElementById('lightsOnTime').value = lightsOnTime;
+	document.getElementById('lightsOffTime').value = lightsOffTime;
+
+	showStatus('ventilation',isVentilationOn);//Panel Ventilacion
+	document.getElementById('ventilationOnTime').value = ventilationOnTime;
+	document.getElementById('ventilationOffTime').value = ventilationOffTime;
+
+	changeBarValue(document.getElementById('tempBar'),temperature,'°C'); //Panel Temperatura
+	
+	changeBarValue(document.getElementById('soilHumBar'),soilHumidity,'%'); //Panel Humedad Suelo
+	document.getElementById('soilHumTextArea').value = soilHumidity;
+	
+	changeBarValue(document.getElementById('humBar'),humidity,'%'); // Panel Humedad Aire
+	document.getElementById('humTextArea').value = humidity;
 	
 	// Change Green/Red span 
 	function showStatus(id,isOn){
@@ -97,29 +176,13 @@
 			document.getElementById(id).className="label label-danger";
 		}
 	}
-	//console.log(status);
-	// showSpan();
 
-	// // Change Status Name
-	// function showSpan(){
-	// 	var spanIdentifiers = ["ventilationSpan","waterFont"];
-
-
-	// 	spanIdentifiers.forEach(function(item, index, array) {
-	// 		document.getElementById(item).textContent="Testeando";
-	// 		document.getElementById(item).className=getClass();
-	// 	});
-	// }
-
-	// //Get span classes
-	// function getClass(){
-		
-		
-	// 	var spanClass = "label label-success";
-
-	// 	return spanClass;
-	// }
+	function changeBarValue(bar,value,sign){
+		bar.style.width  = value + '%';
+		bar.innerHTML  = value + sign;
+	}
 
 
 </script>
+
 </html>
